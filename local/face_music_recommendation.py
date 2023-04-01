@@ -24,14 +24,12 @@ while (time.time() - start_time) < 10:  # loop for 10 seconds
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
             face = frame[y:y+h, x:x+w]
             emotion = DeepFace.analyze(face, actions=['emotion'], enforce_detection=False)
-
+            print(emotion)
             dominant_emotion = emotion[0]['dominant_emotion']
             #print(dominant_emotion)
             emotion_counts[dominant_emotion] += 1
-
         cv2.imshow('Video', frame)
         time.sleep(1)
-
     if cv2.waitKey(1) == ord('q'):
         break
 
@@ -44,6 +42,12 @@ for emotion, count in emotion_counts.items():
     if count >= maxs:
         finale = emotion
         maxs=count
+        if finale == 'disgust':
+            finale = 'sad'
+        elif finale == 'neutral':
+            finale = 'normal'
+        elif finale == 'surprise':
+            finale = 'excited'
 print("Overall Emotion Dominance :",finale)
 print(type(finale))
 #######################################3
@@ -130,7 +134,6 @@ train = pd.concat([emotions_encoded, emotions_normalized], axis=1)
 normalized = pd.concat([df1, emotions_encoded, emotions_normalized], axis=1)
 nn = NearestNeighbors(n_neighbors=20, algorithm='ball_tree')
 nn.fit(train)
-print(recommend_songs(finale, 10))
+print(recommend_songs(finale, 20))
 sp.close()
-
 
