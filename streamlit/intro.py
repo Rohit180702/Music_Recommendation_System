@@ -14,7 +14,7 @@ html = """
                 <h2>made for you</h2>
                 <p><b>Based on your emotion</b></p>
                 <button class="btn"><b>Hit the Webcam!</b></button>
-                <button class="btn"><b>Speak Out!</b></button>
+                <button class="btn1"><b>Speak out!</b></button>
             </div>
         </div>
         <div class="right">
@@ -106,12 +106,24 @@ body{
     height: 5%;
     border-radius: 5px;
 }
+.recomend .btn1{
+    display:block;
+    font-size: 15px;
+    position: absolute;
+    top:80%;
+    left: 7%;
+    color:#0a0a23;
+    background-color: #fff;
+    width: 15%;
+    height: 5%;
+    border-radius: 5px;
+}
 """
 
 # display the HTML and CSS code
 st.markdown(html, unsafe_allow_html=True)
 st.write(f"<style>{css}</style>", unsafe_allow_html=True)
-if st.button('Give it a try!'):
+if st.button('Hit the WebCam!'):
     subprocess.Popen(['streamlit', 'run', 'Facial_Recognition.py'])
 if st.button('Speak out'):
     subprocess.Popen(['streamlit', 'run', 'Verbal_Recognition.py'])
