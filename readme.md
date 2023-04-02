@@ -7,7 +7,7 @@ The system uses DeepFace to analyze the user's emotion from a video input and Op
 To recommend the playlist, the system utilizes the Spotipy library to search for songs and the KNN algorithm to select songs that match the user's emotional state. The recommended playlist is displayed using Streamlit, which makes it easy to use and accessible in a web browser.
 
 # Requirements
-'''
+```
 > Python 3.x
 > DeepFace
 > OpenCV
@@ -15,7 +15,8 @@ To recommend the playlist, the system utilizes the Spotipy library to search for
 > SpeechRecognition
 > Spotipy
 > scikit-learn
-> Streamlit '''
+> Streamlit
+```
 
 # Installation and Usage
 > Clone this repository
