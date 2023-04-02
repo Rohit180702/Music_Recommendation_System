@@ -8,19 +8,23 @@ To recommend the playlist, the system utilizes the Spotipy library to search for
 
 # Requirements
 ```
-> Python 3.x
-> DeepFace
-> OpenCV
-> NLTK
-> SpeechRecognition
-> Spotipy
-> scikit-learn
-> Streamlit
+-> Python 3.x
+-> DeepFace
+-> OpenCV
+-> NLTK
+-> SpeechRecognition
+-> Spotipy
+-> scikit-learn
+-> Streamlit
 ```
 
 # Installation and Usage
 > Clone this repository
+
 > Install the required libraries
+
 > Open Terminal from the Directory "streamlit"
+
 > Run the Streamlit app using streamlit run intro.py
+
 > Copy & Paste the URL obtained after running the above command in a browser
