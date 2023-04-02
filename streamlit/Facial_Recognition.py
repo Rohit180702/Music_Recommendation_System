@@ -70,33 +70,31 @@ detect_emotion()
 
 #Authentication - without user
 
-def recommend_songs(emotion, num_to_select):
-    num_songs=20
-    # create a new array with the normalized features for the input emotion
-    input_emotion = train.loc[train[f"emotion_{emotion}"] == 1].values[:, 0:]
-    # find the nearest neighbors for the input emotion
-    distances, indices = nn.kneighbors(input_emotion)
-    # randomly select a subset of the top recommended songs
-    top_songs = df1.iloc[indices[0]][['name', 'artist']].head(num_songs)
-    selected_songs = top_songs.sample(n=num_to_select, replace=False)
-    return selected_songs
+import spotipy
+import pandas as pd
+import random
+from sklearn.neighbors import NearestNeighbors
+from spotipy.oauth2 import SpotifyClientCredentials
+
 client_credentials_manager = SpotifyClientCredentials(client_id="f99b4dafd3504ab389e943951d0efa39", client_secret="13b6230cb77e4f46a8d2eabb27292750")
 sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
+
 playlist_link = "https://open.spotify.com/playlist/78Sdax2ygDKQiVtbUtzjWQ"
 playlist_URI = playlist_link.split("/")[-1].split("?")[0]
 track_uris = [x["track"]["uri"] for x in sp.playlist_tracks(playlist_URI)["items"]]
-# Retrieve the list of tracks in the playlist
+
 results = sp.playlist_tracks(playlist_URI)
 tracks = results['items']
 while results['next']:
-   results = sp.next(results)
-   tracks.extend(results['items'])
-track_artist = track_uris[99]
+    results = sp.next(results)
+    tracks.extend(results['items'])
+    
 features  = []
 for i in range(100):
     features.append(sp.audio_features(track_uris)[i])
+    
 details = []
-emotions = ["happy","sad","fear","normal","angry"]
+emotions = ["happy","sad","normal","excited","angry"]
 for i,track in enumerate(tracks):
   track_name = track['track']['name']
   track_artist = track['track']['artists'][0]['name']
@@ -113,7 +111,6 @@ for i,track in enumerate(tracks):
   track_instrumentalness = features[i]['instrumentalness']
   track_tempo = features[i]['tempo']
 
-
   details.append({
     'name': track_name,
     'artist': track_artist,
@@ -129,30 +126,44 @@ for i,track in enumerate(tracks):
     'speechiness': track_speechiness,
     'instrumentalness': track_instrumentalness,
     'tempo': track_tempo
+  })
 
-  })  
 df1 = pd.DataFrame(details)
 df1['album'] = df1['album'].str.split('(').str[0]
-c = df1
 df1['popularity'] = df1['popularity'].apply(lambda x: int(x/5))
+
+
 emotions_encoded = pd.get_dummies(df1['emotion'], prefix='emotion')
 emotions_df = df1
 d = ['name','artist','album','id']
 df1 = df1[d]
+
+
 emotions_df = emotions_df.drop(['name','artist','album','id','popularity','emotion'], axis=1)
-emotions_normalized = (emotions_df - emotions_df.mean()) / emotions_df.std()  
-emotions_normalized = emotions_df - emotions_df.mean()
+emotions_normalized = (emotions_df - emotions_df.mean()) / emotions_df.std()
+
+
 train = pd.concat([emotions_encoded, emotions_normalized], axis=1)
 normalized = pd.concat([df1, emotions_encoded, emotions_normalized], axis=1)
+
+
 nn = NearestNeighbors(n_neighbors=20, algorithm='ball_tree')
 nn.fit(train)
-output = recommend_songs(finale, 10)
 
-# Create a DataFrame from the output
+
+def recommend_songs(emotion, num_to_select):
+    num_songs=20
+    input_emotion = train.loc[train[f"emotion_{emotion}"] == 1].values[:, 0:]
+    distances, indices = nn.kneighbors(input_emotion)
+    top_songs = df1.iloc[indices[0]][['name', 'artist']].head(num_songs)
+    selected_songs = top_songs.sample(n=num_to_select, replace=False)
+    return selected_songs
+
+output=recommend_songs(finale, 10)
+
 df = pd.DataFrame(output)
 st.subheader("Your Playlist Suggestion")
-# Display the DataFrame as a Streamlit table
+
 st.table(df.style.set_properties(**{'background-color': 'white',
                                      'color': 'black',
                                      'font-size': '14px'}))
-
