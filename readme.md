@@ -19,12 +19,9 @@ To recommend the playlist, the system utilizes the Spotipy library to search for
 ```
 
 # Installation and Usage
-``` Clone this repository
-
+``` 
+ Clone this repository
  Install the required libraries
-
  Open Terminal from the Directory "streamlit"
-
  Run the Streamlit app using streamlit run intro.py
-
  Copy & Paste the URL obtained after running the above command in a browser```
